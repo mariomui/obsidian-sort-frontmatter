@@ -21,6 +21,10 @@
       "./node_modules/@types",
       "./node_modules/obsidian",
       "./node_modules/@codemirror/state/dist"
+    ],
+    "types": [
+      "jest",
+      "node",
     ]
   },
   "exclude": [
