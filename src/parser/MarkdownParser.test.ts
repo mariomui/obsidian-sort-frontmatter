@@ -1,7 +1,21 @@
 import { splitIntoFrontMatterAndContents } from "./MarkdownParser";
 import * as MarkdownParser from "./MarkdownParser";
-
+import * as utils from "../utils/index";
 jest.mock("obsidian", () => ({}), { virtual: true });
+
+const spy = jest.spyOn(MarkdownParser, "convertObjToYaml");
+const isObjectSpy = jest.spyOn(utils, "isObject");
+const sortBySpy = jest.spyOn(utils, "sortBy");
+
+spy.mockImplementation((obj) => {
+	return MarkdownParser.convertObjToYaml(obj);
+});
+isObjectSpy.mockImplementation((obj) => {
+	return utils.isObject(obj);
+});
+sortBySpy.mockImplementation((...args) => {
+	return utils.sortBy(...args);
+});
 
 const markdown = `---
 list: me
@@ -21,11 +35,7 @@ cabs:
 content
 `;
 
-describe("MarkdownParser basic parse operations", () => {
-	const spy = jest.spyOn(MarkdownParser, "formatListToYaml");
-	spy.mockImplementation((list, counter) => {
-		return "";
-	});
+describe("MarkdownParser::splitIntoFrontMatterAndContents", () => {
 	it("should split the frontmatter and content cleanly", () => {
 		const frontmatter = `
 list: me

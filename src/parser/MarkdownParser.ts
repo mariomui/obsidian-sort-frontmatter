@@ -1,5 +1,8 @@
-import { App, TFile, parseYaml, stringifyYaml } from "obsidian";
+import { App, TFile, parseYaml } from "obsidian";
 import { ProcessFrontMatterSpec } from "src/utils/types";
+import * as yaml from "js-yaml";
+import { isObject, sortBy } from "src/utils";
+import { RecurseVariant, Variant } from "./MarkdownParser.types";
 
 interface MarkdownParserImpl {
 	splitIntoFrontMatterAndContents: (
@@ -17,6 +20,10 @@ interface MarkdownParserImpl {
 	) => string;
 }
 export class MarkdownParser implements MarkdownParserImpl {
+	convertObjToYaml: (
+		obj: Record<string, unknown>,
+		yamlConfig?: { flowLevel: number; styles: { "!!null": string } }
+	) => string;
 	public replaceFileContentsWithSortedFrontMatter(
 		frontMatter: string,
 		content: string,
@@ -47,54 +54,27 @@ MarkdownParser.prototype.splitIntoFrontMatterAndContents =
 	splitIntoFrontMatterAndContents;
 MarkdownParser.prototype.replaceFileContentsWithSortedFrontMatter =
 	replaceFileContentsWithSortedFrontMatter;
+MarkdownParser.prototype.convertObjToYaml = convertObjToYaml;
 
-export function formatListToYaml(
-	list: unknown[],
-	res: unknown[],
-	counter: number
-): void {
-	if (counter < 0) {
-		return;
-	}
-	for (const li of list) {
-		if (Array.isArray(li)) {
-			formatListToYaml(li, res, --counter);
-			continue;
-		}
-		if (isObject(li as Record<string, unknown>)) {
-			res.push(
-				formatObjectToYaml<Record<string, unknown>>(
-					li as Record<string, unknown>,
-					counter
-				)
-			);
-			continue;
-		}
-		res.push(li);
-	}
+export const manuYamlConfig = () => {
+	const yamlConfig = {
+		flowLevel: 3,
+		styles: {
+			"!!null": "camelcase",
+		},
+	};
+	return yamlConfig;
+};
+
+export function convertObjToYaml(
+	obj: Record<string, unknown>,
+	yamlConfig = manuYamlConfig()
+) {
+	const dumped = yaml.dump(obj, yamlConfig);
+
+	return dumped;
 }
-export function formatObjectToYaml<O>(obj: O, counter: number): unknown[][] {
-	if (counter > 3) {
-		return;
-	}
-	const res = Object.entries(obj).map((entry) => {
-		const [k, v] = entry;
-		if (isObject(v)) {
-			return [k, formatObjectToYaml(v as O, --counter)];
-		}
-		if (Array.isArray(v)) {
-			const res = [] as unknown;
-			formatListToYaml(v, res as unknown[], counter);
-			console.log({ res }, "arr");
-			return [k, res];
-		}
-		return [k, v];
-	});
-	return res;
-}
-function isObject(v: Record<string, unknown>) {
-	return Object.prototype.toString.call(v) === "[object Object]";
-}
+
 export function replaceFileContentsWithSortedFrontMatter(
 	frontMatter: string,
 	content: string,
@@ -102,23 +82,10 @@ export function replaceFileContentsWithSortedFrontMatter(
 ): string {
 	const parsedFm = parseYaml(frontMatter);
 
-	const sortedTuples = Object.entries(parsedFm).sort(([k, v], [ak, av]) => {
-		return sortBy(k, ak);
-	});
-	const sorted_frontmatter = sortedTuples.reduce((chain, [k, v]) => {
-		if (Array.isArray(v)) {
-			const res: unknown[] = [];
-			formatListToYaml(v, res, 10);
-			console.log({ res }, "mainFn");
-			return (chain += `${k}: ${JSON.stringify(v)}\n`);
-		}
-		if (isObject(v as Record<string, unknown>)) {
-			return (chain += `${k}: ${JSON.stringify(v)}\n`);
-		}
-		return (chain += `${k}: ${v}\n`);
-	}, "");
-	const sorted_file_contents =
-		"---\n" + sorted_frontmatter + "\n---\n" + content;
+	const sortedObj = recurseVariant(parsedFm);
+	const sorted_yaml = this.convertObjToYaml(sortedObj);
+	console.log({ sortedObj, sorted_yaml, parsedFm });
+	const sorted_file_contents = "---\n" + sorted_yaml + "\n---\n" + content;
 	console.log({ sorted_file_contents });
 	return sorted_file_contents;
 }
@@ -175,4 +142,46 @@ export function splitIntoFrontMatterAndContents(
 	};
 
 	return { processedFrontMatter, processedNonFrontMatter };
+}
+
+function recurseVariant(variant: Variant, thresh = 8): RecurseVariant {
+	// if obj
+	if (thresh < 0) return variant;
+
+	if (isObject(variant as Record<string, Variant>)) {
+		const temp: RecurseVariant = {};
+		const sortedKeys = Object.keys(variant).sort(sortBy);
+		for (const key of sortedKeys) {
+			const variantVal = (variant as Record<string, Variant>)[key];
+			(temp as Record<string, Variant>)[key] = recurseVariant(
+				variantVal,
+				--thresh
+			);
+		}
+		return temp as Record<string, Variant>;
+	}
+	if (Array.isArray(variant)) {
+		return [].concat(
+			variant
+				.filter((v) => typeof v === "string")
+				.filter(Boolean)
+				.sort(sortBy),
+			variant
+				.filter((v) => typeof v === "number")
+				.filter(Boolean)
+				.sort(sortBy),
+			variant
+				.filter((v) => !["number", "string"].includes(typeof v))
+				.filter(Boolean)
+				.map((v) => recurseVariant(v, --thresh))
+		);
+	}
+	return variant as Variant;
+	// loop through obj
+	// sort through keys
+	// create new object, from keys
+	// loop through obj
+	// sort through keys
+	// if array
+	// sort
 }

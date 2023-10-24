@@ -4,6 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "inlineSourceMap": true,
     "inlineSources": true,
@@ -24,7 +25,7 @@
     ],
     "types": [
       "jest",
-      "node",
+      "node"
     ]
   },
   "exclude": [

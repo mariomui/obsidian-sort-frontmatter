@@ -7,18 +7,13 @@ declare module "copy-newer" {
 	export = copyNewer;
 }
 
-// {
-// 	function copyNewer(
-// 		braced_target_files: string,
-// 		dir: string,
-// 		options: unknown
-// 	): Promise<void>;
-// 	export = copyNewer;
-// }
+declare module "yaml" {
+	export interface YamlConfig {
+		[key: string]: unknown;
+	}
 
-// "{main.js,styles.css,manifest.json}",
-// pluginDir,
-// {
-//   verbose: true,
-//   cwd: outDir,
-// }
+	export function dump(
+		obj: Record<string, unknown>,
+		options?: YamlConfig
+	): string;
+}
