@@ -1,4 +1,4 @@
-export type Literal = number | string | object | unknown;
+export type Literal = number | string | unknown;
 export type PluralLiteral<T> = T[] | Record<string, T>;
 export type Variant = Literal | PluralLiteral<Literal>;
 

@@ -1,8 +1,8 @@
 import { App, TFile, parseYaml } from "obsidian";
-import { ProcessFrontMatterSpec } from "src/utils/types";
+import { ProcessFrontMatterSpec } from "../utils/types";
 import * as yaml from "js-yaml";
-import { isObject, sortBy } from "src/utils";
-import { RecurseVariant, Variant } from "./MarkdownParser.types";
+import { isObject, sortBy } from "../utils";
+import { Literal, RecurseVariant, Variant } from "./MarkdownParser.types";
 
 interface MarkdownParserImpl {
 	splitIntoFrontMatterAndContents: (
@@ -16,18 +16,26 @@ interface MarkdownParserImpl {
 	replaceFileContentsWithSortedFrontMatter: (
 		frontMatter: string,
 		content: string,
-		sortBy: (a: string, b: string) => number
+		sortBy: (a: Variant, b: Variant) => number
 	) => string;
-}
-export class MarkdownParser implements MarkdownParserImpl {
 	convertObjToYaml: (
 		obj: Record<string, unknown>,
 		yamlConfig?: { flowLevel: number; styles: { "!!null": string } }
 	) => string;
+}
+
+export class MarkdownParser implements MarkdownParserImpl {
+	public convertObjToYaml(
+		obj: Record<string, unknown>,
+		yamlConfig?: { flowLevel: number; styles: { "!!null": string } }
+	): ReturnType<typeof replaceFileContentsWithSortedFrontMatter> {
+		throw new Error("Method not implemented.");
+	}
+
 	public replaceFileContentsWithSortedFrontMatter(
 		frontMatter: string,
 		content: string,
-		sortBy: (a: string, b: string) => number
+		sortBy: (a: Literal, b: Literal) => number
 	): ReturnType<typeof replaceFileContentsWithSortedFrontMatter> {
 		throw new Error("Method not implemented.");
 	}
@@ -78,12 +86,14 @@ export function convertObjToYaml(
 export function replaceFileContentsWithSortedFrontMatter(
 	frontMatter: string,
 	content: string,
-	sortBy: (a: string, b: string) => number
+	sortBy: (a: Variant, b: Variant) => number
 ): string {
 	const parsedFm = parseYaml(frontMatter);
 
-	const sortedObj = recurseVariant(parsedFm);
-	const sorted_yaml = this.convertObjToYaml(sortedObj);
+	const sortedObj = recurseVariant(parsedFm) as RecurseVariant;
+	const sorted_yaml = (this.convertObjToYaml as typeof convertObjToYaml)(
+		sortedObj as any
+	);
 	console.log({ sortedObj, sorted_yaml, parsedFm });
 	const sorted_file_contents = "---\n" + sorted_yaml + "\n---\n" + content;
 	console.log({ sorted_file_contents });

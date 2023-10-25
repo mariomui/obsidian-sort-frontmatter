@@ -13,6 +13,8 @@ import {
 	Workspace,
 } from "obsidian";
 import { MarkdownParser } from "./parser/MarkdownParser";
+import { Variant } from "./parser/MarkdownParser.types";
+import { sortBy } from "./utils";
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -37,8 +39,7 @@ export default class MyPlugin extends Plugin {
 
 	async #genSortFrontMatterWithinContents(
 		tFile: TFile,
-		sortBy = (a: string, b: string): number =>
-			a.charCodeAt(0) - b.charCodeAt(0)
+		sortBy: (a: Variant, b: Variant) => number
 	): Promise<{ data: string; err: Error | null }> {
 		const app = this.app;
 		return new Promise((res, rej) => {
@@ -68,8 +69,8 @@ export default class MyPlugin extends Plugin {
 
 				const sorted_file_contents =
 					parser.replaceFileContentsWithSortedFrontMatter(
-						processedFrontMatter.frontMatter,
-						processedNonFrontMatter.content,
+						processedFrontMatter.frontMatter || "",
+						processedNonFrontMatter.content || "",
 						sortBy
 					);
 
@@ -79,12 +80,11 @@ export default class MyPlugin extends Plugin {
 		});
 	}
 
-	public async genSortFrontmatter(datums: any[]): Promise<void> {
-		console.log({ datums });
-		new Notice("Mario", 5000);
-		const view = workspace.getActiveViewOfType(MarkdownView);
-		console.log(view.editor.getDoc(), "hi");
-		await this.#genSortFrontMatterWithinContents(workspace.getActiveFile());
+	public async genSortFrontmatter(datums: unknown[]): Promise<void> {
+		await this.#genSortFrontMatterWithinContents(
+			workspace.getActiveFile(),
+			sortBy
+		);
 	}
 	async onload() {
 		await this.loadSettings();
