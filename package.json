@@ -53,7 +53,7 @@
 		"tsx": "tsx",
 		"version": "node ./version-bump.mjs"
 	},
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"dependencies": {
 		"js-yaml": "^4.1.0"
 	}
