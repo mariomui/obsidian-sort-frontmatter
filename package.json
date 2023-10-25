@@ -50,7 +50,8 @@
 		"build:es": "tsx ./esbuild.config.ts prod",
 		"dev": "tsx ./esbuild.config.ts",
 		"dev:live": "tsx ./esbuild.config.ts livedev",
-		"tsx": "tsx"
+		"tsx": "tsx",
+		"version": "node ./version-bump.mjs"
 	},
 	"version": "1.0.1",
 	"dependencies": {
