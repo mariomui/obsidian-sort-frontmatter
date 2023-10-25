@@ -1,6 +1,6 @@
 import { App, TFile, parseYaml } from "obsidian";
 import { ProcessFrontMatterSpec } from "../utils/types";
-import * as yaml from "js-yaml";
+import * as jsyaml from "js-yaml";
 import { isObject, sortBy } from "../utils";
 import { Literal, RecurseVariant, Variant } from "./MarkdownParser.types";
 
@@ -78,7 +78,7 @@ export function convertObjToYaml(
 	obj: Record<string, unknown>,
 	yamlConfig = manuYamlConfig()
 ) {
-	const dumped = yaml.dump(obj, yamlConfig);
+	const dumped = jsyaml.dump(obj, yamlConfig);
 
 	return dumped;
 }
@@ -95,7 +95,7 @@ export function replaceFileContentsWithSortedFrontMatter(
 		sortedObj as any
 	);
 	console.log({ sortedObj, sorted_yaml, parsedFm });
-	const sorted_file_contents = "---\n" + sorted_yaml + "\n---\n" + content;
+	const sorted_file_contents = "---\n" + sorted_yaml + "---\n" + content;
 	console.log({ sorted_file_contents });
 	return sorted_file_contents;
 }

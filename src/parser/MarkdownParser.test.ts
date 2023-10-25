@@ -1,21 +1,19 @@
 import { splitIntoFrontMatterAndContents } from "./MarkdownParser";
 import * as MarkdownParser from "./MarkdownParser";
 import * as utils from "../utils/index";
-jest.mock("obsidian", () => ({}), { virtual: true });
+import * as yaml from "yaml";
 
-const spy = jest.spyOn(MarkdownParser, "convertObjToYaml");
-const isObjectSpy = jest.spyOn(utils, "isObject");
-const sortBySpy = jest.spyOn(utils, "sortBy");
-
-spy.mockImplementation((obj) => {
-	return MarkdownParser.convertObjToYaml(obj);
-});
-isObjectSpy.mockImplementation((obj) => {
-	return utils.isObject(obj);
-});
-sortBySpy.mockImplementation((...args) => {
-	return utils.sortBy(...args);
-});
+jest.mock(
+	"obsidian",
+	() => {
+		return {
+			parseYaml: (yaml_content: string) => {
+				return yaml.parse(yaml_content);
+			},
+		};
+	},
+	{ virtual: true }
+);
 
 const markdown = `---
 list: me
@@ -50,7 +48,7 @@ bird: two
 		expect(actual.processedNonFrontMatter.content).toEqual(content);
 	});
 
-	it("should organize arrays well in front matter", () => {
+	it("should split up frontmatter and nonfm even with arrays", () => {
 		const frontmatter = `
 tabs:
   - 5
@@ -67,6 +65,44 @@ cabs:
 	});
 });
 
-describe("Markdown basic sorting operations", () => {
-	it("should sort top level items even if they are arrays", () => {});
+describe("MarkdownParser::replaceFileContentsWithSortedFrontMatter", () => {
+	it("should sort simple literals", () => {
+		const expected_markdown = `---
+bird: two
+list: me
+---
+poo`;
+		const actual = splitIntoFrontMatterAndContents(markdown);
+
+		const actual_markdown =
+			MarkdownParser.replaceFileContentsWithSortedFrontMatter(
+				actual.processedFrontMatter.frontMatter,
+				actual.processedNonFrontMatter.content,
+				utils.sortBy
+			);
+
+		// console.debug(inspect({ actual_markdown }, { colors: true }));
+		expect(expected_markdown).toEqual(actual_markdown);
+	});
+	it("should sort arrays", () => {
+		const expected_markdown = `---
+cabs:
+  - fiver
+  - ten
+tabs:
+  - batman
+  - 5
+---
+content`;
+		const actual = splitIntoFrontMatterAndContents(markdownWithArrays);
+
+		const actual_markdown =
+			MarkdownParser.replaceFileContentsWithSortedFrontMatter(
+				actual.processedFrontMatter.frontMatter,
+				actual.processedNonFrontMatter.content,
+				utils.sortBy
+			);
+		console.log({ actual_markdown });
+		expect(expected_markdown).toEqual(actual_markdown);
+	});
 });

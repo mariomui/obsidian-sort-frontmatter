@@ -7,7 +7,7 @@ declare module "copy-newer" {
 	export = copyNewer;
 }
 
-declare module "yaml" {
+declare module "js-yaml" {
 	export interface YamlConfig {
 		[key: string]: unknown;
 	}
