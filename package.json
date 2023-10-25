@@ -52,7 +52,7 @@
 		"dev:live": "tsx ./esbuild.config.ts livedev",
 		"tsx": "tsx"
 	},
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"dependencies": {
 		"js-yaml": "^4.1.0"
 	}
