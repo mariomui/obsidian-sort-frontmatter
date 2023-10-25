@@ -81,7 +81,7 @@ poo`;
 				utils.sortBy
 			);
 
-		// console.debug(inspect({ actual_markdown }, { colors: true }));
+		//
 		expect(expected_markdown).toEqual(actual_markdown);
 	});
 	it("should sort arrays", () => {
@@ -102,7 +102,7 @@ content`;
 				actual.processedNonFrontMatter.content,
 				utils.sortBy
 			);
-		console.log({ actual_markdown });
+
 		expect(expected_markdown).toEqual(actual_markdown);
 	});
 });

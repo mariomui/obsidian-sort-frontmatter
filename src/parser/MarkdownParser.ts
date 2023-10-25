@@ -94,9 +94,9 @@ export function replaceFileContentsWithSortedFrontMatter(
 	const sorted_yaml = (this.convertObjToYaml as typeof convertObjToYaml)(
 		sortedObj as any
 	);
-	console.log({ sortedObj, sorted_yaml, parsedFm });
+
 	const sorted_file_contents = "---\n" + sorted_yaml + "---\n" + content;
-	console.log({ sorted_file_contents });
+
 	return sorted_file_contents;
 }
 export function splitIntoFrontMatterAndContents(
