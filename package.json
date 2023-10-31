@@ -11,7 +11,7 @@
 			"codemirror"
 		]
 	},
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Sort frontmatter",
 	"devDependencies": {
 		"@codemirror/state": "^6.3.0",
 		"@codemirror/view": "^6.21.3",
