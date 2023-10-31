@@ -1,10 +1,9 @@
 {
-	"id": "obsidian-sort-frontmatter",
+	"id": "sort-frontmatter",
 	"name": "Sort Frontmatter",
-	"minAppVersion": "1.0.3",
+	"minAppVersion": "1.0.20",
 	"description": "Sort frontmatter recursively",
 	"author": "Kanzi",
-	"authorUrl": "mariomui.me",
 	"fundingUrl": "https://obsidian.md/pricing",
 	"isDesktopOnly": true,
 	"version": "1.0.20"
