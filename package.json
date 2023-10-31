@@ -47,7 +47,7 @@
 	"scripts": {
 		"test": "jest --ci",
 		"test:watch": "NODE_ENV=test jest --watch",
-		"build:es": "tsx ./esbuild.config.ts prod",
+		"build": "tsx ./esbuild.config.ts prod",
 		"dev": "tsx ./esbuild.config.ts",
 		"dev:live": "tsx ./esbuild.config.ts livedev",
 		"tsx": "tsx",
