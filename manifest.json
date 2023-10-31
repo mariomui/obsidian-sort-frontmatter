@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-sort-frontmatter",
 	"name": "Sort Frontmatter",
-	"minAppVersion": "1.0.2",
+	"minAppVersion": "1.0.3",
 	"description": "Sort frontmatter recursively",
 	"author": "Kanzi",
 	"authorUrl": "mariomui.me",
