@@ -19,7 +19,7 @@ if (process.argv[2] === "livedev") {
 
 // .env takes precedence over NODE_ENV
 const OBSIDIAN_TEST_VAULT =
-  processEnv?.OBSIDIAN_TEST_VAULT || process.env.OBSIDIAN_TEST_VAULT;
+  processEnv?.OBSIDIAN_TEST_VAULT || process.env?.OBSIDIAN_TEST_VAULT;
 
 if (
   (!prod && !OBSIDIAN_TEST_VAULT) ||
@@ -138,18 +138,16 @@ export function doMoveArtifactsUsingPlugins() {
         build.onEnd(copy);
         async function copy() {
           const outDir =
-            build.initialOptions.outdir ??
-            dirname(build.initialOptions.outfile || ARTIFACTS_DIR);
+            build?.initialOptions?.outdir ??
+            dirname(build?.initialOptions?.outfile || ARTIFACTS_DIR);
           await copyNewer("manifest*.json", dir, {
             verbose: true,
             cwd: ".",
-          });
+          }).catch(console.log);
           await copyNewer("{main.js,manifest.json,styles.css}", dir, {
             verbose: true,
             cwd: outDir,
-          }).catch((e) => {
-            console.log({ e });
-          });
+          }).catch(console.log);
         }
       },
     });
@@ -167,7 +165,7 @@ export function doHotReload(isHotReload = true): void {
             const pluginDir = join(
               OBSIDIAN_TEST_VAULT,
               ".obsidian/plugins",
-              basename(dataCarryover.manifestId)
+              basename(dataCarryover.manifestId || "")
             );
             if (isHotReload) await ensureFile(pluginDir + "/.hotreload");
           }
@@ -184,7 +182,18 @@ export function doHotReload(isHotReload = true): void {
 const ENTRY_POINT = {
   main: "src/main.ts",
 };
-const ESBUILD_CONFIG_PATH = resolve("", "./esbuild.config.ts");
+gittester();
+function gittester() {
+  {
+    let test = "";
+    try {
+      test = resolve("./", "esbuild.config.ts");
+    } catch (e) {
+      logg({ err: e, test, desc: "resolve does not work on line 188" });
+    }
+  }
+}
+const ESBUILD_CONFIG_PATH = resolve("./", "esbuild.config.ts");
 export function manuInitializePipeConfigs(): InitializePipeConfigs {
   return {
     buildOptions: {
