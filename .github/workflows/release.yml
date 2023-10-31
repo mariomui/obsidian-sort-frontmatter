@@ -29,7 +29,20 @@ jobs:
         with:
           path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-      - name: Build plugin
+
+      - name: Check if esbuild.config.ts exists
+        id: check-config
+        run: |
+          if [ -f "esbuild.config.ts" ]; then
+            echo "esbuild.config.ts found."
+            echo "::set-output name=config-found::true"
+          else
+            echo "esbuild.config.ts not found."
+            echo "::set-output name=config-found::false"
+            ls -a
+          fi
+      - name: Build with tsx
+        if: steps.check-config.outputs.config-found == 'true'
         run: |
           pnpm install --no-frozen-lockfile
           pnpm build
