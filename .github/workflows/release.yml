@@ -14,16 +14,19 @@ jobs:
         uses: actions/setup-node@v3.6.0
         with:
           node-version: 20
+
       - uses: pnpm/action-setup@v2.2.4
         name: Install pnpm
         id: pnpm-install
         with:
           version: 8
           run_install: false
+
       - name: Get pnpm store directory
         id: pnpm-cache
         run: |
           echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
       - uses: actions/cache@v3.3.1
         name: Setup pnpm cache
         with:
@@ -41,10 +44,12 @@ jobs:
             echo "::set-output name=config-found::false"
             ls -a
           fi
+
       - name: Check if pnpm can find esbuild
         id: check-pnpm-find-path
         run: |
           pnpm run checkpath
+
       - name: Build with tsx
         if: steps.check-config.outputs.config-found == 'true'
         run: |

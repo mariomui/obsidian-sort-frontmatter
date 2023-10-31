@@ -1,0 +1,55 @@
+{
+  "steps": [
+    {
+      "name": "Checkout",
+      "uses": "actions/checkout@v3.5.3"
+    },
+    {
+      "name": "Install Node.js",
+      "uses": "actions/setup-node@v3.6.0",
+      "with": {
+        "node-version": 20
+      }
+    },
+    {
+      "uses": "pnpm/action-setup@v2.2.4",
+      "name": "Install pnpm",
+      "id": "pnpm-install",
+      "with": {
+        "version": 8,
+        "run_install": false
+      }
+    },
+    {
+      "name": "Get pnpm store directory",
+      "id": "pnpm-cache",
+      "run": "echo \"pnpm_cache_dir=$(pnpm store path)\" >> $GITHUB_OUTPUT\n"
+    },
+    {
+      "uses": "actions/cache@v3.3.1",
+      "name": "Setup pnpm cache",
+      "with": {
+        "path": "${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}",
+        "key": "${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}"
+      }
+    },
+    {
+      "name": "Cache build",
+      "uses": "actions/cache@v3.3.1",
+      "id": "cache-build",
+      "with": {
+        "path": "semcore/*/lib\ntools/*/lib\nsemcore/icon/**/*.js\nsemcore/icon/**/*.mjs\nsemcore/icon/**/*.d.ts\nsemcore/illustration/**/*.js\nsemcore/illustration/**/*.mjs\nsemcore/illustration/**/*.d.ts\n",
+        "key": "build-${{ hashFiles('**/pnpm-lock.yaml', '**/CHANGELOG.md') }}-3"
+      }
+    },
+    {
+      "name": "Install dependencies",
+      "run": "pnpm install --frozen-lockfile\n"
+    },
+    {
+      "name": "Build",
+      "if": "steps.cache-build.outputs.cache-hit != 'true'",
+      "run": "pnpm build\n"
+    }
+  ]
+}
