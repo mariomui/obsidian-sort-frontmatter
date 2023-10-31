@@ -126,7 +126,7 @@ export function doMoveArtifactsUsingPlugins() {
       return dataCarryover;
     }
     const pluginDir = join(
-      OBSIDIAN_TEST_VAULT,
+      OBSIDIAN_TEST_VAULT || "",
       ".obsidian/plugins",
       basename(dataCarryover.manifestId)
     );
@@ -182,17 +182,7 @@ export function doHotReload(isHotReload = true): void {
 const ENTRY_POINT = {
   main: "src/main.ts",
 };
-gittester();
-function gittester() {
-  {
-    let test = "";
-    try {
-      test = resolve("./", "esbuild.config.ts");
-    } catch (e) {
-      logg({ err: e, test, desc: "resolve does not work on line 188" });
-    }
-  }
-}
+
 const ESBUILD_CONFIG_PATH = resolve("./", "esbuild.config.ts");
 export function manuInitializePipeConfigs(): InitializePipeConfigs {
   return {
