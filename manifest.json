@@ -4,7 +4,6 @@
 	"minAppVersion": "1.0.20",
 	"description": "Sort frontmatter recursively",
 	"author": "Kanzi",
-	"fundingUrl": "https://obsidian.md/pricing",
 	"isDesktopOnly": true,
 	"version": "1.0.22"
 }
