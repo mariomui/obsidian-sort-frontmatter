@@ -21,7 +21,10 @@ if (process.argv[2] === "livedev") {
 const OBSIDIAN_TEST_VAULT =
   processEnv?.OBSIDIAN_TEST_VAULT || process.env.OBSIDIAN_TEST_VAULT;
 
-if ((!prod && !OBSIDIAN_TEST_VAULT) || !existsSync(OBSIDIAN_TEST_VAULT)) {
+if (
+  (!prod && !OBSIDIAN_TEST_VAULT) ||
+  (!prod && !existsSync(OBSIDIAN_TEST_VAULT))
+) {
   const message = "Path could not be found. Exiting.";
   logg({ err: `${OBSIDIAN_TEST_VAULT}, ${message}`, message });
   process.exit(1);
