@@ -41,6 +41,10 @@ jobs:
             echo "::set-output name=config-found::false"
             ls -a
           fi
+      - name: Check if pnpm can find esbuild
+        id: check-pnpm-find-path
+        run: |
+          pnpm run checkpath
       - name: Build with tsx
         if: steps.check-config.outputs.config-found == 'true'
         run: |
