@@ -134,3 +134,7 @@ If you have multiple URLs, you can also do:
 # ---Transient
 
 - https://github.com/pnpm/action-setup
+- https://github.com/semrush/intergalactic/blob/42b9103599043e0f9802dce058c15d0cc33a093b/.github/workflows/cd.yml
+  - ## ERRORS That occured
+    - resolve and join require strings, the github linter will complain.
+    - Errors are more prominent in github actions, all js is run be careful of your checks such as process.env checks. existsSync will throw even if it doesnt throw on your computer.
