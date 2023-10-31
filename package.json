@@ -43,7 +43,7 @@
 	"keywords": [],
 	"license": "MIT",
 	"main": "src/main.ts",
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-sort-frontmatter",
 	"scripts": {
 		"test": "jest --ci",
 		"test:watch": "NODE_ENV=test jest --watch",
