@@ -63,7 +63,7 @@ export default class Main extends Plugin {
   }
   async onload() {
     this.addCommand({
-      id: "obsidian-sort-frontmatter:sort",
+      id: "sort",
       name: "Sort frontmatter",
       callback: async (...args) => {
         await this.genSortFrontmatter(args);
