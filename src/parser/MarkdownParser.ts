@@ -145,8 +145,9 @@ export function splitIntoFrontMatterAndContents(
     blockFrom: startingStartIndex,
     blockTo: endingEndMatchIdx,
   };
+
   const processedNonFrontMatter = {
-    content: file_contents.slice(endingEndMatchIdx, fileEndIdx),
+    content: file_contents.slice(endingEndMatchIdx, fileEndIdx + 1),
     from: endingEndMatchIdx,
     to: fileEndIdx,
   };
