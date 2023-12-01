@@ -276,6 +276,7 @@ export function createPipeKit() {
 
   /**
    * Provides quick way to frontload pipe tasks.
+   * There is an assumption here that the manifest json wont be hotswapped.
    */
   function getPrimingPipers(): Easydo[] {
     const doCopyManifestToSlab = () =>
