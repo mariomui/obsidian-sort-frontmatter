@@ -27,7 +27,7 @@ interface MarkdownParserImpl {
 export class MarkdownParser implements MarkdownParserImpl {
   public convertObjToYaml(
     obj: Record<string, unknown>,
-    yamlConfig?: { flowLevel: number; styles: { "!!null": string } }
+    yamlConfig?: jsyaml.YamlConfig
   ): ReturnType<typeof replaceFileContentsWithSortedFrontMatter> {
     throw new Error("Method not implemented.");
   }
@@ -64,14 +64,15 @@ MarkdownParser.prototype.replaceFileContentsWithSortedFrontMatter =
   replaceFileContentsWithSortedFrontMatter;
 MarkdownParser.prototype.convertObjToYaml = convertObjToYaml;
 
-export const manuYamlConfig = () => {
+export const manuYamlConfig = (): jsyaml.YamlConfig => {
   const yamlConfig = {
     flowLevel: 3,
     styles: {
-      "!!null": "camelcase",
+      "!!null": "empty",
     },
+    quotingType: '"',
   };
-  return yamlConfig;
+  return yamlConfig as jsyaml.YamlConfig;
 };
 
 export function convertObjToYaml(
